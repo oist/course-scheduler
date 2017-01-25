@@ -1,0 +1,31 @@
+course ID, name, length, teacher, possible days, possible start time
+A101,Adaptive Systems,120,Doya,0;1,
+A101,Adaptive Systems,120,Doya,2;3;4,
+A201,Quantum Mechanics,120,Konstantinov,0;1;2,
+A201,Quantum Mechanics,120,Konstantinov,3;4,
+A202,Fluid Dynamics,60,Mitarai,0,540
+A202,Fluid Dynamics,60,Mitarai,1,540
+A202,Fluid Dynamics,60,Mitarai,2,540
+A202,Fluid Dynamics,60,Mitarai,3;4,540
+A206,Analog Electronics,60,Qi,0,
+A206,Analog Electronics,180,Qi,0,840
+A206,Analog Electronics,60,Qi,2,
+A206,Analog Electronics,180,Qi,2,840
+A213,Inorganic Electrochemistry,120,Khusnutdinova,,
+A213,Inorganic Electrochemistry,120,Khusnutdinova,,
+A306,Neuroethology,120,Yazaki-Sugiyama,,
+A306,Neuroethology,120,Yazaki-Sugiyama,,
+A401,Controversies in Science,180,Arbuthnott,,780;810;840;870;900
+A409,Electron Microscopy,120,Wolf,2,600
+A409,Electron Microscopy,120,Wolf,3,840
+B03,Mathematics I,60,Sinclair,,600
+B03,Mathematics I,60,Sinclair,,600
+B10,Analytical Mechanics,120,Bandi,2,
+B10,Analytical Mechanics,120,Bandi,3,
+B14,Solid Mechanics,120,Gioia,,
+B14,Solid Mechanics,120,Gioia,,
+SC,Skill Clinic,90,Gillet,1;2;3,
+JP1,Japanese 1,60,Yamakawa,0,960
+JP1,Japanese 1,60,Yamakawa,2,960
+PD1,Professional Development,120,Wickens,4,840
+PD2,Professional Development,120,Arbuthnott,4,840
