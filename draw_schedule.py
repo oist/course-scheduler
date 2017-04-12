@@ -2,7 +2,6 @@ import random as rd
 import os
 
 def draw_schedule(year, term, csv_courses, csv_schedule, output_path):
-    sch = open(csv_schedule,'r')
     try :
         sch = open(csv_schedule,'r')
     except IOError:
@@ -82,9 +81,10 @@ def draw_schedule(year, term, csv_courses, csv_schedule, output_path):
             d += 1
         cells[stop][d] = "\\cellcolor{{{}!100}} \\multirow{{-{}}}{{{}mm}}{{" \
                 "\\centering {{\\bfseries \\color{{white}} \\sffamily "\
-                "{} ({})\\\\ {} \\\\ {} \\\\ {}:{:02d}--{}:{:02d}}}}}".format(
+                "{} ({})\\\\ {} \\\\ {}:{:02d}--{}:{:02d}}}}}".format( # Room number not in here
+#                "{} ({})\\\\ {} \\\\ {} \\\\ {}:{:02d}--{}:{:02d}}}}}".format( # romm number is in there
                         courses[course][2] , stop-start+1, cellWidth,
-                        courses[course][0],  course,courses[course][1], room,
+                        courses[course][0],  course,courses[course][1], #room,
                         (start_day+start*chunks)/60, (start_day+start*chunks)%60,
                         (start_day+(stop+1)*chunks)/60,(start_day+(stop+1)*chunks)%60)
         for t in range(start, stop):

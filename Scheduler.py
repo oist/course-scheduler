@@ -8,42 +8,40 @@ import draw_schedule as ds
 '''
 TO DO:
 - teaching labs
-- seed with last year's solution
 - room preferences
 
 '''
 
 year = 2016
-term = 2
-
+term = 3
 
 timestamp = int(time.time())
+def hToMin(hour,minutes):
+    return hour*60+minutes
+
+def textToMin(time):
+    h, m = map(int,time.split(':'))
+    return hToMin(h,m)
 
 weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
 chunks = 30  # Size of the time slots
-start_day = 9*60
-end_day = 17*60 + 30
-
-
-# determine if application is a script file or frozen exe
-if getattr(sys, 'frozen', False):
-    application_path = os.path.dirname(sys.executable)
-elif __file__:
-    application_path = os.path.dirname(__file__)
+start_day = hToMin(9,0)
+end_day = hToMin(17,30)
 
 input_path = "input_files"
-rooms_path = os.path.join(application_path, input_path, "rooms.csv")
-courses_path = os.path.join(application_path, input_path, "{}_{}_courses.csv".format(year, term))
-students_path = os.path.join(application_path, input_path, "{}_{}_students.csv".format(year, term))
+rooms_path = os.path.join(input_path, "rooms.csv")
+courses_path = os.path.join(input_path, "{}_{}_courses.csv".format(year, term))
+students_path = os.path.join(input_path, "{}_{}_students.csv".format(year, term))
+seed_path = os.path.join(input_path, "{}_{}_seed.csv".format(year, term))
 
 output_path = "output_files"
-sic_path = os.path.join(application_path, output_path, "{}_{}_student_in_courses.txt".format(year, term))
-schedule_path = os.path.join(application_path, output_path, "{}_{}_{}_schedule.csv".format(year, term, timestamp))
+sic_path = os.path.join(output_path, "{}_{}_student_in_courses.txt".format(year, term))
+schedule_path = os.path.join(output_path, "{}_{}_{}_schedule.csv".format(year, term, timestamp))
 warning_path = schedule_path.replace("schedule","warnings").replace("csv","txt")
 
 
 class Schedule:
-    def __init__(self, size=1000, mutation_rate=0.05, to_select=100, generations=400):
+    def __init__(self, size=1000, mutation_rate=0.05, to_select=100, generations=200):
         # Initializing constants
         self.size = size
         self.mutation_rate = mutation_rate
@@ -56,6 +54,7 @@ class Schedule:
         self.courses = self.import_courses()
         self.students = self.import_students()
         self.student_in_courses = self.get_student_in_courses()
+        self.seed = self.import_seed()
 
         self.solution = []
         self.final_fitness = 0
@@ -89,13 +88,30 @@ class Schedule:
         #       Multiple boards, Simultaneous board and screen/monitor, Seminar type
         rooms = {}  # Available rooms
         f = open(rooms_path, 'r')
-        f.readline()  # Skipping the first row
+        f.readline()  # Skipping the header row
         for l in f:
             data = l.strip().split(',')  # name, features (see above)
             # key = room name, values = [features of the room]
             rooms[data[0]] = map(int, data[1:])
         f.close()
         return rooms
+
+    # Reading seed from last year
+    def import_seed(self):
+        schedule=[]
+        sessions={}
+        f = open(seed_path, 'r')
+        f.readline()  # Skipping the header row
+        for l in f:
+            # Day,Start time,End time,Course ID,Room
+            day, start, stop, course, room = l.strip().split(',')
+            if course in sessions:
+                sessions[course]+=1
+            else:
+                sessions[course]=0
+            schedule.append([weekdays.index(day), textToMin(start), \
+                        textToMin(stop)-chunks, room, course, sessions[course]])
+        return schedule
 
     # Reading data from a csv file containing info about the courses
     def import_courses(self):
@@ -143,7 +159,7 @@ class Schedule:
         ts = []
         for day in range(len(weekdays)):  # Every day in the week
             for time in range(start_day, end_day, chunks):  # Every chunks minute slice from 9 to 17:30
-                if time != 12*60 or not(day==3 and time==16*60): # Avoid lunch and tea time completely
+                if time != hToMin(12,0) or not(day==3 and time==hToMin(16,0)): # Avoid lunch and tea time completely
                     for room in self.rooms.keys():
                         ts.append([day, time, room])
         return ts
@@ -179,7 +195,7 @@ class Schedule:
 
     # Initializes a population of random schedules
     def initialize_pop(self, size):
-        pop = []  # new population
+        pop = [self.seed]  # new population with seed
         for i in range(size):
             p = self.random_creature()
             if p:
@@ -228,8 +244,8 @@ class Schedule:
         for (day, start, stop, room, course, session) in schedule:
             # Time related
             for time in range(start, stop + 1, chunks):
-                if 12 * 60 <= time < 13 * 60: fit += 3000  # Lunch time
-                if day == 3 and 16 * 60 <= time < 17 * 60: fit += 2000  # Tea time
+                if hToMin(12,0) <= time < hToMin(13,0): fit += 3000  # Lunch time
+                if day == 3 and hToMin(16,0) <= time < hToMin(17,0): fit += 2000  # Tea time
 
                 # Start checking for overlapping students
                 exact_time = day * 10000 + time
@@ -265,8 +281,6 @@ class Schedule:
     def breed_population(self, top_pop):
         # p = []
         p = copy.deepcopy(top_pop)  # Elitism
-        # for i in range(self.size/100):  # Adding some random genes
-        #     p.append(self.random_creature())
 
         for k in range(self.size - len(p)):
             # Gene splicing
@@ -313,7 +327,7 @@ class Schedule:
             print s
 
     def export_schedule(self, schedule):
-        f = open(os.path.join(application_path, schedule_path), "w")
+        f = open(schedule_path, "w")
         f.write("Day,Start time,End time,Course ID,Room\n")
         for p in sorted(schedule, key=lambda k: k[0] * 10000 + k[1]):
             f.write("{},{}:{:02d},{}:{:02d},{},{}\n".format(weekdays[p[0]], p[1] / 60, p[1] % 60, (p[2] + chunks) / 60,
@@ -330,9 +344,9 @@ class Schedule:
             day, start, stop, course, room = l.strip().split(',')
             day=weekdays.index(day)
             x, y = map(int,start.split(':'))
-            start = x*60 + y
+            start = hToMin(x,y)
             x, y = map(int,stop.split(':'))
-            stop = x*60 + y - chunks
+            stop = hToMin(x,y) - chunks
             self.solution.append([day, start, stop, room, course, -1])
         sch.close()
 
@@ -349,9 +363,9 @@ class Schedule:
                 s = "\n{}, from {}:{:02d} to {}:{:02}, course {} in {}" \
                     .format(weekdays[day], time / 60, time % 60, (time + chunks) / 60, (time + chunks) % 60, course,
                             room)
-                if 12 * 60 <= time < 13 * 60:  # Lunch time
+                if hToMin(12,0) <= time < hToMin(13,0):  # Lunch time
                     warn += s + " happens during lunch"
-                if day == 3 and 16 * 60 <= time < 17 * 60:  # Tea time
+                if day == 3 and hToMin(16,0) <= time < hToMin(17,0):  # Tea time
                     warn += s + " happens during tea time"
 
                 # Start checking for overlapping students
@@ -377,12 +391,12 @@ class Schedule:
 if __name__ == '__main__':
     s = Schedule()
     try:
-        schedule_path = sys.argv[1]
+        schedule_path = sys.argv[1] # One argument: scheduled mofified by hand
         s.import_schedule(schedule_path)
         warning_path = schedule_path.replace("schedule","warnings").replace("csv","txt")
         s.checkschedule()
 
-    except IndexError:
+    except IndexError: # No arguments
         s.build()
         print "\nThe final fitness is {}".format(s.final_fitness)
 
