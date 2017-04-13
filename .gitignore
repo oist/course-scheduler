@@ -1,3 +1,8 @@
+# Working files
+input_files/*
+output_files/*
+other\ schedules/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
