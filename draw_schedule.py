@@ -21,8 +21,7 @@ def draw_schedule(year, term, csv_courses, csv_schedule, output_path):
     weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
     chunks = 30
     start_day = 9*60
-    end_day = 17*60 + 30
-    # total_width = 297 - 20  # A4 length in mm - 10mm margins
+    end_day = 18*60
 
     # colors = ["Apricot", "Aquamarine", "Bittersweet", "Blue", "BlueGreen", "BrickRed",
     #           "BurntOrange", "CarnationPink", "Cyan", "Dandelion", "DarkOrchid",
@@ -57,111 +56,105 @@ def draw_schedule(year, term, csv_courses, csv_schedule, output_path):
         day, start, stop, course, room = l.strip().split(',')
         day=weekdays.index(day)
         x, y = map(int,start.split(':'))
-        start = (x*60 + y - start_day)/chunks
+        start = x*60 + y
         x, y = map(int,stop.split(':'))
-        stop = (x*60 + y - start_day)/chunks - 1
+        stop = x*60 + y
         schedule.append([day, start, stop, room, course])
     sch.close()
 
-    # Get number of columns
-    timeslots = [[0 for j in range(len(weekdays))] for i in range(((end_day-start_day)/chunks+1))]
-    width = [0 for j in range(len(weekdays))]
+    # Get timeslots
+    timeslots = [[[]] for i in weekdays]
+    width = [0 for i in weekdays]
     for day, start, stop, room, course in schedule:
-        for t in range(start, stop + 1):
-            timeslots[t][day] += 1
-            if width[day] < timeslots[t][day]:
-                width[day] = timeslots[t][day]
-    cellWidth = 200/sum(width)
-
-    # Write individual cells
-    cells = [["" for j in range(sum(width))] for i in range((end_day-start_day)/chunks+1)]
-    for day, start, stop, room, course in schedule:
-        d = sum(width[:day])
-        while cells[start][d] != "":
-            d += 1
-        cells[stop][d] = "\\cellcolor{{{}!100}} \\multirow{{-{}}}{{{}mm}}{{" \
-                "\\centering {{\\bfseries \\color{{white}} \\sffamily "\
-                "{} ({})\\\\ {} \\\\ {}:{:02d}--{}:{:02d}}}}}".format( # Room number not in here
-#                "{} ({})\\\\ {} \\\\ {} \\\\ {}:{:02d}--{}:{:02d}}}}}".format( # romm number is in there
-                        courses[course][2] , stop-start+1, cellWidth,
-                        courses[course][0],  course,courses[course][1], #room,
-                        (start_day+start*chunks)/60, (start_day+start*chunks)%60,
-                        (start_day+(stop+1)*chunks)/60,(start_day+(stop+1)*chunks)%60)
-        for t in range(start, stop):
-            cells[t][d] = "\\cellcolor{{{}!100}} ".format(courses[course][2])
-
-    cells[6] = ["\\multicolumn{{{}}}{{c||}}{{\\multirow{{2}}*{{\\normalsize Lunch}}}}"
-                    .format(width[k]) for k in range(len(weekdays)-1)]  # Lunch top
-    cells[6].append("\\multicolumn{{{}}}{{c|}}{{\\multirow{{2}}*{{\\normalsize Lunch}}}}".format(width[-1]))
-    cells[7] = ["\\multicolumn{{{}}}{{c||}}{{}}".format(width[k]) for k in range(len(weekdays)-1)]  # Lunch bottom
-    cells[7].append("\\multicolumn{{{}}}{{c|}}{{}}".format(width[-1]))
-
-    cells[14][sum(width[:3])] = "\\multicolumn{{{}}}{{c||}}{{\\multirow{{2}}*{{\\normalsize Tea Time}}}}".format(width[3])  # Tea time top
-    cells[15][sum(width[:3])] = "\\multicolumn{{{}}}{{c||}}{{}}".format(width[3])   # Tea time bottom
-    for k in range(width[3]-1): # Removes empty elements for tea time
-        del cells[14][sum(width[:3])+1]
-        del cells[15][sum(width[:3])+1]
+        j=0
+        while not all([start>=c[2] or stop <=c[1]  for c in timeslots[day][j] ]) :
+            if j<len(timeslots[day]) -1:
+                j+=1
+            else:
+                timeslots[day].append([])
+        timeslots[day][j].append([day, start, stop, room, course])
+        width[day] = max(width[day], j+1)
+    cellWidth = 263/sum(width)
 
     # Writing LaTeX file
     f = open(schedule_path, 'w')
     f.write("\\documentclass[landscape,a4paper]{article}\n"
-            "\\usepackage{multirow, array, hhline}\n"
             "\\usepackage[dvipsnames, table]{xcolor}\n"
-            "\\usepackage{type1cm, geometry}\n"
-            "\\usepackage{color}\n"
-            "\\newgeometry{margin=0.8cm}\n"
-            "\\setlength{\\arrayrulewidth}{0.2pt}\n\n"
-            "\\begin{document}\n"
-            "\\pagestyle{empty}\n\n"
-            "\\begin{table} \\centering\n"
-            "\\fontsize{0.2cm}{0.3cm}\selectfont\n"
-            "\\def\\arraystretch{3}\\noindent\n")
-    f.write("{{\\normalsize {}}}\n".format(title))
+            "\\usepackage{tikz, geometry}\n"
+            "\\newgeometry{margin=1cm}\n"
+            "\\begin{document}\n\n"
+            "\\centering\n"
+            "\\pagestyle{empty}\n\n")
 
-    # Column sizes
-    f.write("\\begin{tabular}{|p{8mm}|")
-    for day in range(len(weekdays)):
-        f.write("|" + "p{{{}mm}}|".format(cellWidth)*width[day])
+    # Title
+    f.write(title + "\n\\vspace{3mm}\n\n")
+    f.write("\\begin{tikzpicture}[x=277mm, y=-180mm]\n")
 
-    # top hhline
-    f.write("}\n\\hhline{~")
-    for day in range(len(weekdays)):
-        f.write("|*{{{}}}{{-|}}".format(width[day]))
-    f.write("}\n")
+    # Weekdays and grid
+    f.write("\n% Days\n")
+    f.write("\\tikzstyle{day}=[draw, rectangle, minimum height=8mm, anchor=north west]\n")
+    pos = 12
+    for i, day in enumerate(weekdays):
+        f.write("\\node[day, minimum width={}mm] at ({}mm,0) {{{}}}; \n"
+                .format(cellWidth*width[i], pos, day))
+        pos += cellWidth*width[i] + 1
 
-    # Weekdays
-    f.write("\\multicolumn{1}{c|}{}")
-    for day in range(len(weekdays)-1):
-        f.write(" & \\multicolumn{{{}}}{{c||}}{{\\normalsize {}}}".format(width[day], weekdays[day]))
-    f.write(" & \\multicolumn{{{}}}{{c|}}{{\\normalsize {}}}".format(width[-1], weekdays[-1]))
+    # Grid
+    f.write("\n% Grid\n")
+    f.write("\\tikzstyle{grid}=[draw, rectangle, minimum height=171mm, anchor=north west]\n")
+    pos = 12
+    for i, day in enumerate(weekdays):
+        for j in range(width[i]):
+                f.write("\\node[grid, minimum width={}mm] at ({}mm,-9mm) {{ }}; \n"
+                        .format(cellWidth, pos))
+                pos += cellWidth
+        pos += 1
 
-    # hhline below weekdays
-    f.write(" \\\\ \\hhline{-:")
-    for day in range(len(weekdays)):
-        f.write(":*{{{}}}{{=:}}".format(width[day]))
-    f.write("}\n")
+    # Lunch
+    f.write("\n% Lunch\n")
+    f.write("\\tikzstyle{lunch}=[draw, rectangle, minimum height=19mm, anchor=north west, fill=white]\n")
+    pos = 12
+    for i, day in enumerate(weekdays):
+        f.write("\\node[lunch, minimum width={}mm] at ({}mm,-66mm) {{Lunch}}; \n" \
+                .format(cellWidth*width[i], pos))
+        pos += cellWidth*width[i] + 1
 
-    # main table
-    f.write("\\multicolumn{1}{|c||}")
-    for i, c in enumerate(cells):
-        if i%2 == 0:
-            f.write("{{\\normalsize {}:{:02d} }}& ".format((start_day+i*chunks)/60,(start_day+i*chunks)%60))
-        else:
-            f.write(" & ")
-        f.write("&".join(c))
-        if i == 5 or i == 7:
-            f.write(" \\\\ \\hhline{-|")  # Lunch time hhline
-            for day in range(len(weekdays)):
-                f.write("|*{{{}}}{{-|}}".format(width[day]))
-            f.write("}\n")
-        elif i == 13 or i == 15:  # tea time hhline
-            f.write(" \\\\ \\hhline{{-||*{{{}}}{{~}}||*{{{}}}{{-}}||}}\n".format(sum(width[:3]),width[3]))
-        else:
-            f.write(" \\\\ {}  \n".format("\\hhline{-||}"*(i%2==1 and i<len(cells)-1 )))  # Normal hhline
+    # Tea time
+    f.write("\n% Time\n")
+    f.write("\\node[lunch, minimum width={}mm] at ({}mm,-142mm) {{Tea Time}}; \n" \
+        .format(cellWidth*width[3], 15+cellWidth*sum(width[:3])))
 
-    f.write(" \\hhline{{-||{}}}\n \\end{{tabular}}\n"
-            "\\end{{table}}\n\n"
-            "\\end{{document}}".format("-"*sum(width)))
+    # Hours
+    f.write("\n% Hours\n")
+    f.write("\\tikzstyle{hours}=[draw, rectangle, minimum height=19mm, minimum width=11mm, anchor=north west]\n")
+    pos = -9
+    for i in range(9,18):
+        f.write("\\node[hours, label={{[shift={{(0,-6mm)}}]north:{}:00}}] at (0,{}mm) {{}}; \n".format(i,pos))
+        pos -= 19
+
+    # Schedule
+    f.write("\n% Schedule\n")
+    f.write("\\tikzstyle{{course}}=[draw, rectangle,anchor=north west,text centered,"
+            "minimum width={}mm, text width={}mm]\n".format(cellWidth,0.82 *cellWidth))
+    xpos=11
+    for day in timeslots:
+        xpos+=1
+        for j in day:
+            for day, start, stop, room, course in j:
+                sizes={"x":xpos,
+                       "y":-9-171.0*(start-start_day)/(end_day-start_day),
+                       "height":171.0*(stop-start)/(end_day-start_day),
+                       "color":courses[course][2],
+                       "text":"{{\\bfseries \\color{{white}} \\sffamily \\tiny "\
+                              "{} ({})\\\\ {} \\\\ {} \\\\ {}:{:02d}--{}:{:02d}}}"\
+                              .format(courses[course][0],course,courses[course][1], room,
+                               start/60, start%60,stop/60,stop%60)}
+                f.write("\\node[course, minimum height={height}mm, fill={color}]" \
+                        " at ({x}mm,{y}mm) \n {{{text}}}; \n".format(**sizes))
+            xpos += cellWidth
+
+    f.write("\\end{tikzpicture}\n"
+            "\\end{document}")
     f.close()
 
     os.system("pdflatex -output-directory={} {}".format(output_path, schedule_path))

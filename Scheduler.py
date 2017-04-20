@@ -119,7 +119,7 @@ class Schedule:
 
         # Key = course ID, values = [name, teacher, class number, possible days, possible starts]
         f = open(courses_path, 'r')
-        # f.readline()  # Skipping the first row
+        f.readline()  # Skipping the header row
         for l in f:
             # course ID, name, length, teacher, possible days, possible starts
             id, name, length, teacher, days, starts = l.strip().split(',')
@@ -138,12 +138,12 @@ class Schedule:
     def import_students(self):
         students = {}
         f = open(students_path, 'r')
-        # f.readline()  # Skipping the first row
+        f.readline()  # Skipping the header row
         for l in f:
             id, name, course = l.strip().split(',')  # ID, name, course
             # key = ID, values = [name, course]
             if students.get(id) is None:
-                students[id] = [name, course, "SC"]  # Adding Skill Clinic for every student
+                students[id] = [name, course, "SC", "SA"]  # Adding Skill Clinic, Student Activities for every student
                 if id[:2] == str(year % 100):
                     students[id].append("JP1")
                     students[id].append("PD1")
