@@ -4,16 +4,17 @@ import time
 import os
 import sys
 import draw_schedule as ds
+import mysql_requests as mysql
 
 '''
 TO DO:
 - teaching labs
 - room preferences
-
+- no students picks a course
 '''
 
-year = 2016
-term = 3
+year = 2017
+term = 1
 
 timestamp = int(time.time())
 def hToMin(hour,minutes):
@@ -38,7 +39,6 @@ output_path = "output_files"
 sic_path = os.path.join(output_path, "{}_{}_student_in_courses.txt".format(year, term))
 schedule_path = os.path.join(output_path, "{}_{}_{}_schedule.csv".format(year, term, timestamp))
 warning_path = schedule_path.replace("schedule","warnings").replace("csv","txt")
-
 
 class Schedule:
     def __init__(self, size=1000, mutation_rate=0.05, to_select=100, generations=200):
@@ -98,20 +98,23 @@ class Schedule:
 
     # Reading seed from last year
     def import_seed(self):
-        schedule=[]
-        sessions={}
-        f = open(seed_path, 'r')
-        f.readline()  # Skipping the header row
-        for l in f:
-            # Day,Start time,End time,Course ID,Room
-            day, start, stop, course, room = l.strip().split(',')
-            if course in sessions:
-                sessions[course]+=1
-            else:
-                sessions[course]=0
-            schedule.append([weekdays.index(day), textToMin(start), \
-                        textToMin(stop)-chunks, room, course, sessions[course]])
-        return schedule
+        try:
+            schedule=[]
+            sessions={}
+            f = open(seed_path, 'r')
+            f.readline()  # Skipping the header row
+            for l in f:
+                # Day,Start time,End time,Course ID,Room
+                day, start, stop, course, room = l.strip().split(',')
+                if course in sessions:
+                    sessions[course]+=1
+                else:
+                    sessions[course]=0
+                schedule.append([weekdays.index(day), textToMin(start), \
+                            textToMin(stop)-chunks, room, course, sessions[course]])
+            return schedule
+        except IOError:
+            return []
 
     # Reading data from a csv file containing info about the courses
     def import_courses(self):
@@ -143,7 +146,7 @@ class Schedule:
             id, name, course = l.strip().split(',')  # ID, name, course
             # key = ID, values = [name, course]
             if students.get(id) is None:
-                students[id] = [name, course, "SC", "SA"]  # Adding Skill Clinic, Student Activities for every student
+                students[id] = [name, course, "SA"]  # Adding Skill Clinic, Student Activities for every student
                 if id[:2] == str(year % 100):
                     students[id].append("JP1")
                     students[id].append("PD1")
@@ -195,7 +198,10 @@ class Schedule:
 
     # Initializes a population of random schedules
     def initialize_pop(self, size):
-        pop = [self.seed]  # new population with seed
+        if self.seed:
+            pop = [self.seed]  # new population with seed
+        else:
+            pop = []
         for i in range(size):
             p = self.random_creature()
             if p:
@@ -389,6 +395,7 @@ class Schedule:
 
 
 if __name__ == '__main__':
+    mysql.get_students(input_path, year, term)
     s = Schedule()
     try:
         schedule_path = sys.argv[1] # One argument: scheduled mofified by hand
