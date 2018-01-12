@@ -32,4 +32,4 @@ def get_students(input_path, year, term):
     f.close()
 
 if __name__ == '__main__':
-    get_students("input_files", 2017, 1)
+    get_students("input_files", 2017, 2)

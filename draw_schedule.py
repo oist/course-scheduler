@@ -32,9 +32,10 @@ def draw_schedule(year, term, csv_courses, csv_schedule, output_path):
     #           "SeaGreen", "SpringGreen", "Tan", "TealBlue", "Thistle", "Turquoise", "Violet",
     #           "VioletRed", "WildStrawberry", "Yellow", "YellowGreen", "YellowOrange"]
 
-    colors = ["blue", "brown", "cyan", "Blue", "ForestGreen", "magenta", "olive", "orange", "Mahogany", "Sepia",
-              "pink", "purple", "red", "teal", "violet", "black", "Gray", "Periwinkle",
-              "Emerald", "Fuchsia", "Apricot"]
+    colors = ['Apricot', 'Blue', 'Emerald', 'ForestGreen', 'Fuchsia', 'Gray',
+               'Mahogany', 'Periwinkle', 'Sepia', 'Thistle', 'black', 'blue',
+               'brown', 'cyan', 'magenta', 'olive', 'orange', 'Peach', 'pink',
+               'purple','red', 'teal', 'violet', 'YellowOrange']
 
     # Importing name of courses and teachers
     courses = {}
@@ -145,10 +146,10 @@ def draw_schedule(year, term, csv_courses, csv_schedule, output_path):
                        "y":-9-171.0*(start-start_day)/(end_day-start_day),
                        "height":171.0*(stop-start)/(end_day-start_day),
                        "color":courses[course][2],
-                       "text":"{{\\bfseries \\color{{white}} \\sffamily \\scriptsize {}"\
-                               " ({})"\
+                       "text":"{{\\bfseries \\color{{white}} \\sffamily \\tiny {}"\
+                    #           " ({})"\
                               "\\\\ {} \\\\ {} \\\\ {}:{:02d}--{}:{:02d}}}"\
-                              .format(courses[course][0], course,
+                              .format(courses[course][0], #course,
                                courses[course][1], room, start/60, start%60,stop/60,stop%60)}
                 f.write("\\node[course, minimum height={height}mm, fill={color}]" \
                         " at ({x}mm,{y}mm) \n {{{text}}}; \n".format(**sizes))
