@@ -6,4 +6,3 @@ JOIN course co ON co.id=g.course_id
 WHERE classification='OIST Student'
 AND class_id LIKE '2015_3_%'
 ORDER BY preferred_n
-LIMIT 0 , 100

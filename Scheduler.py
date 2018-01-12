@@ -14,7 +14,7 @@ TO DO:
 '''
 
 year = 2017
-term = 1
+term = 2
 
 timestamp = int(time.time())
 def hToMin(hour,minutes):
@@ -146,7 +146,7 @@ class Schedule:
             id, name, course = l.strip().split(',')  # ID, name, course
             # key = ID, values = [name, course]
             if students.get(id) is None:
-                students[id] = [name, course, "SA"]  # Adding Skill Clinic, Student Activities for every student
+                students[id] = [name, course, "SA", "SC"]  # Adding Skill Clinic, Student Activities for every student
                 if id[:2] == str(year % 100):
                     students[id].append("JP1")
                     students[id].append("PD1")
@@ -366,9 +366,8 @@ class Schedule:
         for (day, start, stop, room, course, session) in self.solution:
             # Time related
             for time in range(start, stop + 1, chunks):
-                s = "\n{}, from {}:{:02d} to {}:{:02}, course {} in {}" \
-                    .format(weekdays[day], time / 60, time % 60, (time + chunks) / 60, (time + chunks) % 60, course,
-                            room)
+                s = "\n{}, from {}:{:02d} to {}:{:02}, course {}" \
+                    .format(weekdays[day], time / 60, time % 60, (time + chunks) / 60, (time + chunks) % 60, course)
                 if hToMin(12,0) <= time < hToMin(13,0):  # Lunch time
                     warn += s + " happens during lunch"
                 if day == 3 and hToMin(16,0) <= time < hToMin(17,0):  # Tea time
@@ -382,8 +381,8 @@ class Schedule:
                 else:
                     for student in self.student_in_courses[course]:
                         if student in stu[exact_time]:
-                            warn += s + ", student {} is also supposed to be in course {}" \
-                                .format(student, co[exact_time][stu[exact_time].index(student)])
+                            warn += s + " and {} conflict (for student {})" \
+                                .format(co[exact_time][stu[exact_time].index(student)], student)
                         else:
                             stu[exact_time].append(student)
                             co[exact_time].append(course)
@@ -395,7 +394,7 @@ class Schedule:
 
 
 if __name__ == '__main__':
-    mysql.get_students(input_path, year, term)
+#    mysql.get_students(input_path, year, term)
     s = Schedule()
     try:
         schedule_path = sys.argv[1] # One argument: scheduled mofified by hand
