@@ -5,13 +5,13 @@ def draw_schedule(year, term, csv_courses, csv_schedule, output_path):
     try :
         sch = open(csv_schedule,'r')
     except IOError:
-        print "Please enter a valid path for the CSV schedule"
+        print("Please enter a valid path for the CSV schedule")
         exit()
 
     try :
         crs = open(csv_courses,'r')
     except IOError:
-        print "Please enter a valid path for the CSV courses"
+        print("Please enter a valid path for the CSV courses")
         exit()
 
     schedule_path = csv_schedule.replace("csv", "tex")
@@ -35,7 +35,7 @@ def draw_schedule(year, term, csv_courses, csv_schedule, output_path):
     colors = ['Apricot', 'Blue', 'Emerald', 'ForestGreen', 'Fuchsia', 'Gray',
                'Mahogany', 'Periwinkle', 'Sepia', 'Thistle', 'black', 'blue',
                'brown', 'cyan', 'magenta', 'olive', 'orange', 'Peach', 'pink',
-               'purple','red', 'teal', 'violet', 'YellowOrange']
+               'purple','red', 'teal', 'violet', 'YellowOrange', 'TealBlue', 'Melon']
 
     # Importing name of courses and teachers
     courses = {}
@@ -147,9 +147,9 @@ def draw_schedule(year, term, csv_courses, csv_schedule, output_path):
                        "height":171.0*(stop-start)/(end_day-start_day),
                        "color":courses[course][2],
                        "text":"{{\\bfseries \\color{{white}} \\sffamily \\tiny {}"\
-                    #           " ({})"\
+                              " ({})"\
                               "\\\\ {} \\\\ {} \\\\ {}:{:02d}--{}:{:02d}}}"\
-                              .format(courses[course][0], #course,
+                              .format(courses[course][0], course,
                                courses[course][1], room, start/60, start%60,stop/60,stop%60)}
                 f.write("\\node[course, minimum height={height}mm, fill={color}]" \
                         " at ({x}mm,{y}mm) \n {{{text}}}; \n".format(**sizes))
