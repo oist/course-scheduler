@@ -5,6 +5,7 @@ import os
 import sys
 import draw_schedule as ds
 import mysql_requests as mysql
+import draw_chart
 
 '''
 TO DO:
@@ -14,7 +15,7 @@ TO DO:
 '''
 
 year = 2017
-term = 2
+term = 3
 
 timestamp = int(time.time())
 def hToMin(hour,minutes):
@@ -72,7 +73,7 @@ class Schedule:
             selected_pop, top_fitness = self.select_top(population, fit)
             self.solution = copy.deepcopy(selected_pop[0])
             self.final_fitness = top_fitness
-            print k + 1, top_fitness
+            print(k + 1, top_fitness)
             # Stop if we find a perfect solution
             if top_fitness == 0: break
             # Breed the next generation
@@ -169,19 +170,18 @@ class Schedule:
 
     # Lists each participants per course, prints a message when a course picked isn't in the list
     def get_student_in_courses(self):
-        sic = {}
+        sic = { course:[] for course in self.courses }
         nonav = []
         for id in self.students.keys():
             for course in self.students[id][1:]:
                 if course not in self.courses.keys():
                     if course not in nonav:
-                        print "\n{} not in the list of available courses".format(course)
+                        print("\n{} not in the list of available courses".format(course))
                         nonav.append(course)
                 else:
-                    if sic.get(course) is None:
-                        sic[course] = [id]
-                    else:
-                        sic[course].append(id)
+                    sic[course].append(id)
+
+        draw_chart.draw_chart(year, term, sic, output_path)
 
         f = open(sic_path, 'w')
         for course in sic:
@@ -330,7 +330,7 @@ class Schedule:
                         , p[4], self.courses[p[4]][0][0], self.courses[p[4]][0][1], p[3])
             s += ", ".join([self.students[id][0] for id in self.student_in_courses.get(p[4])])
             s += ")"
-            print s
+            print(s)
 
     def export_schedule(self, schedule):
         f = open(schedule_path, "w")
@@ -404,6 +404,6 @@ if __name__ == '__main__':
 
     except IndexError: # No arguments
         s.build()
-        print "\nThe final fitness is {}".format(s.final_fitness)
+        print("\nThe final fitness is {}".format(s.final_fitness))
 
     ds.draw_schedule(year, term, courses_path, schedule_path, output_path)

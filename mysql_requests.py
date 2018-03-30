@@ -1,9 +1,9 @@
-import MySQLdb
+import pymysql
 import os
 
-db = MySQLdb.connect(host="dbc01.oist.jp",       # your host, usually localhost
+db = pymysql.connect(host="dbc01.oist.jp",       # your host, usually localhost
                      user="gs_readonly",         # your username
-                     passwd=***REMOVED***,  # your password
+                     passwd="",  # your password
                      db="grad_school")           # name of the data base
 
 def get_students(input_path, year, term):
@@ -32,4 +32,4 @@ def get_students(input_path, year, term):
     f.close()
 
 if __name__ == '__main__':
-    get_students("input_files", 2017, 2)
+    get_students("input_files", 2017, 3)
