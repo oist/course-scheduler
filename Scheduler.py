@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import random as rd
 import copy
 import time
@@ -11,10 +12,9 @@ import draw_chart
 TO DO:
 - teaching labs
 - room preferences
-- no students picks a course
 '''
 
-year = 2017
+year = 2018
 term = 3
 
 timestamp = int(time.time())
@@ -171,15 +171,16 @@ class Schedule:
     # Lists each participants per course, prints a message when a course picked isn't in the list
     def get_student_in_courses(self):
         sic = { course:[] for course in self.courses }
-        nonav = []
+        nonav = set()
         for id in self.students.keys():
             for course in self.students[id][1:]:
                 if course not in self.courses.keys():
-                    if course not in nonav:
-                        print("\n{} not in the list of available courses".format(course))
-                        nonav.append(course)
+                    nonav.add(course)
                 else:
                     sic[course].append(id)
+
+        for course in nonav:
+            print("\n{} not in the list of available courses".format(course))
 
         draw_chart.draw_chart(year, term, sic, output_path)
 
@@ -194,7 +195,7 @@ class Schedule:
     # Checks if a timeslot is available
     def free_slot(self, day, start, room, length, timeslots):
         # Return true if all the consecutive chunks minute slots for the course are available
-        return all([([day, start + k * chunks, room] in timeslots) for k in range(length / chunks)])
+        return all([([day, start + k * chunks, room] in timeslots) for k in range(length // chunks)])
 
     # Initializes a population of random schedules
     def initialize_pop(self, size):
@@ -233,9 +234,9 @@ class Schedule:
                     else:
                         start = rd.choice(range(start_day, end_day, chunks))
 
-                    room = rd.choice(self.rooms.keys())
+                    room = rd.choice(list(self.rooms.keys()))
 
-                for k in range(length / chunks):
+                for k in range(length // chunks):
                     ts.remove([day, start + k * chunks, room])
                 # Structure: day, start time, stop time, room, course, session. Course is fixed.
                 p.append([day, start, start + length - chunks, room, course, session])
@@ -325,19 +326,19 @@ class Schedule:
     def print_schedule(self, schedule):
         # Sort the schedule items by weekday and time
         for p in sorted(schedule, key=lambda k: k[0] * 10000 + k[1]):
-            s = "{}, from {}:{:02d} to {}:{:02}, course {} ({}, {}) in {} (" \
-                .format(weekdays[p[0]], p[1] / 60, p[1] % 60, (p[2] + chunks) / 60, (p[2] + chunks) % 60
-                        , p[4], self.courses[p[4]][0][0], self.courses[p[4]][0][1], p[3])
-            s += ", ".join([self.students[id][0] for id in self.student_in_courses.get(p[4])])
-            s += ")"
+            s = "{}, from {}:{:02d} to {}:{:02}, course {} ({}, {}) in {} ({})" \
+                .format(weekdays[p[0]], p[1] // 60, p[1] % 60, (p[2] + chunks) // 60, (p[2] + chunks) % 60
+                        , p[4], self.courses[p[4]][0][0], self.courses[p[4]][0][1], p[3]
+                        , ", ".join([self.students[id][0] for id in self.student_in_courses.get(p[4])]))
             print(s)
 
     def export_schedule(self, schedule):
         f = open(schedule_path, "w")
         f.write("Day,Start time,End time,Course ID,Room\n")
         for p in sorted(schedule, key=lambda k: k[0] * 10000 + k[1]):
-            f.write("{},{}:{:02d},{}:{:02d},{},{}\n".format(weekdays[p[0]], p[1] / 60, p[1] % 60, (p[2] + chunks) / 60,
-                                                            (p[2] + chunks) % 60, p[4], p[3]))
+            f.write("{},{}:{:02d},{}:{:02d},{},{}\n".format(weekdays[p[0]]
+                     , p[1] // 60, p[1] % 60, (p[2] + chunks) // 60
+                     , (p[2] + chunks) % 60, p[4], p[3]))
         f.close()
 
     # Importing schedule
@@ -367,7 +368,8 @@ class Schedule:
             # Time related
             for time in range(start, stop + 1, chunks):
                 s = "\n{}, from {}:{:02d} to {}:{:02}, course {}" \
-                    .format(weekdays[day], time / 60, time % 60, (time + chunks) / 60, (time + chunks) % 60, course)
+                    .format(weekdays[day], time // 60, time % 60
+                           , (time + chunks) // 60, (time + chunks) % 60, course)
                 if hToMin(12,0) <= time < hToMin(13,0):  # Lunch time
                     warn += s + " happens during lunch"
                 if day == 3 and hToMin(16,0) <= time < hToMin(17,0):  # Tea time
@@ -394,12 +396,12 @@ class Schedule:
 
 
 if __name__ == '__main__':
-#    mysql.get_students(input_path, year, term)
+   # mysql.get_students(input_path, year, term)
     s = Schedule()
     try:
         schedule_path = sys.argv[1] # One argument: scheduled mofified by hand
         s.import_schedule(schedule_path)
-        warning_path = schedule_path.replace("schedule","warnings").replace("csv","txt")
+        warning_path = schedule_path.replace("_schedule","_warnings").replace("csv","txt")
         s.checkschedule()
 
     except IndexError: # No arguments
