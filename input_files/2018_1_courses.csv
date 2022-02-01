@@ -1,0 +1,39 @@
+course ID, name, length, teacher, possible days, possible start time
+A104,Vector and Tensor Calculus,120,Fried,,
+A104,Vector and Tensor Calculus,120,Fried,,
+A202,Fluid Dynamics,60,Mitarai,,
+A202,Fluid Dynamics,60,Mitarai,,
+A206,Analog Electronics,60,Qi,0,
+A206,Analog Electronics,180,Qi,0,840
+A206,Analog Electronics,60,Qi,2,
+A206,Analog Electronics,180,Qi,2,840
+A209,Ultrafast Spectroscopy,120,Dani,,
+A209,Ultrafast Spectroscopy,60,Dani,,
+A212,Microfluidics,120,Shen,1,840
+A212,Microfluidics,120,Shen,3,840
+A213,Inorganic Electrochemistry,120,Khusnutdinova,,
+A213,Inorganic Electrochemistry,120,Khusnutdinova,,
+A216,Quantum Mechanics I,120,Konstantinov,0;1;2,
+A216,Quantum Mechanics I,120,Konstantinov,3;4,
+A220,New Enzymes by Directed Evolution,120,Laurino,,
+A220,New Enzymes by Directed Evolution,120,Laurino,,
+A221,Special Relativity,120,Neiman,,
+A221,Special Relativity,120,Neiman,,
+A313,Cognitive Neurorobotics,120,Tani,,
+A313,Cognitive Neurorobotics,120,Tani,,
+A314,Neurobiology of Learning and Memory,90,Wickens,,
+A314,Neurobiology of Learning and Memory,60,Wickens,,
+A314,Neurobiology of Learning and Memory,240,Wickens,,
+A401,Controversies in Science,180,Arbuthnott,,780;810;840;870;900
+A407,Basic Cell Biology,120,Kono,,
+A407,Basic Cell Biology,120,Kono,,
+B22,Computational Methods,120,Doya,0;1,
+B22,Computational Methods,120,Doya,2;3;4,
+B24,Neuronal Dynamics of Movement,120,Uusisaari,,
+B24,Neuronal Dynamics of Movement,120,Uusisaari,,
+SC,Skill Clinic,90,Gillet,1,960
+JP1,Japanese 1,60,Yamakawa,0,960
+JP1,Japanese 1,60,Yamakawa,2,960
+PD1,Professional Development,120,Skoglund,4,840
+PD2,Professional Development,120,Arbuthnott,4,840
+SA,Student Activities,60,\,4,780

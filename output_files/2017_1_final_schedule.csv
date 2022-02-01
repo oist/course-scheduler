@@ -1,0 +1,24 @@
+Day,Start time,End time,Course ID,Room
+Monday,9:00,10:00,A206,B700
+Monday,10:00,12:00,B22,B700 and B701
+Monday,10:00,12:00,A209,B711
+Monday,13:00,16:00,A206,B702a
+Monday,16:00,17:00,JP1,C600
+Tuesday,10:00,12:00,A306,B712 and Unit Lab
+Tuesday,13:00,15:00,B21,B715
+Tuesday,13:00,16:00,A401,B700
+Wednesday,9:00,10:00,A206,B700
+Wednesday,10:00,12:00,A216,B700
+Wednesday,10:00,12:00,B21,B715
+Wednesday,13:00,16:00,A206,B702a
+Wednesday,13:00,15:00,A306,B712 and Unit Lab
+Wednesday,14:00,16:00,B10,B714a
+Wednesday,16:00,17:00,JP1,C600
+Thursday,10:00,12:00,A216,B70
+Thursday,13:00,15:00,A209,B711
+Thursday,13:00,15:00,B22,B700 and B701
+Thursday,14:00,16:00,B10,B714a
+Friday,10:00,12:00,A216,B700
+Friday,13:00,14:00,SA,B700
+Friday,14:00,16:00,PD1,B700
+Friday,14:00,16:00,PD2,C700

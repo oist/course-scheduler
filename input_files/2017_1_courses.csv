@@ -1,0 +1,23 @@
+course ID, name, length, teacher, possible days, possible start time
+A206,Analog Electronics,60,Qi,0,
+A206,Analog Electronics,180,Qi,0,840
+A206,Analog Electronics,60,Qi,2,
+A206,Analog Electronics,180,Qi,2,840
+A306,Neuroethology,120,Yazaki-Sugiyama,,
+A306,Neuroethology,120,Yazaki-Sugiyama,,
+A401,Controversies in Science,180,Arbuthnott,,780;810;840;870;900
+B10,Analytical Mechanics,120,Bandi,2,
+B10,Analytical Mechanics,120,Bandi,3,
+JP1,Japanese 1,60,Yamakawa,0,960
+JP1,Japanese 1,60,Yamakawa,2,960
+PD1,Professional Development,120,Wickens,4,840
+PD2,Professional Development,120,Arbuthnott,4,840
+B22,Computational Methods,120,Doya,0;1,
+B22,Computational Methods,120,Doya,2;3;4,
+A216,Quantum Mechanics I,120,Konstantinov,0;1;2,
+A216,Quantum Mechanics I,120,Konstantinov,3;4,
+A209,Ultrafast Spectroscopy,120,Dani,,
+A209,Ultrafast Spectroscopy,60,Dani,,
+B21, Biophysics of Cellular Membranes,120,Kusumi,,
+B21, Biophysics of Cellular Membranes,120,Kusumi,,
+SA,Student Activities,60,\,4,780

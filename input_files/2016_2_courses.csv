@@ -1,0 +1,38 @@
+course ID, name, length, teacher, possible days, possible start time
+A203,Advanced Optics,240,Nic Chormaic,2,780
+A203,Advanced Optics,120,Nic Chormaic,,
+A203,Advanced Optics,60,Nic Chormaic,2,660
+A208,Bioorganic Chemistry,120,Tanaka,,
+A208,Bioorganic Chemistry,180,Tanaka,,
+A210,Advanced Quantum Mechanics,120,Busch,,
+A210,Advanced Quantum Mechanics,60,Busch,,
+A212,Microfluidics,120,Shen,1,840
+A212,Microfluidics,120,Shen,3,840
+A214,Nucleic Acid Chemistry and Engineering,120,Yokobayashi,0,
+A214,Nucleic Acid Chemistry and Engineering,120,Yokobayashi,2,
+A303,Develop\-mental Biology,120,Masai,1;2;3;4,
+A307,Molecular Oncology and Cell Signaling,120,Yamamoto,2,
+A307,Molecular Oncology and Cell Signaling,60,Yamamoto,2,
+A310,Computa\-tional Neuroscience,120,De Schutter,,
+A310,Computa\-tional Neuroscience,60,De Schutter,,
+A311,Cellular Aging and Human Longevity,120,Yanagida,,
+B04,Mathematics II,60,Sinclair,,660
+B04,Mathematics II,120,Sinclair,1,780;840;900
+B08,Physics for Life Sciences,180,Kuhn,,
+B08,Physics for Life Sciences,60,Kuhn,,
+B08,Physics for Life Sciences,60,Kuhn,,
+B09,Learning and Behavior,120,Tripp,,
+B09,Learning and Behavior,120,Tripp,,
+B11,Classical Electrodynamics,120,Shintake,,
+B12,Statistical Physics,120,Shannon,,
+B12,Statistical Physics,60,Shannon,,
+B12,Statistical Physics,60,Shannon,,
+B16,Ecology and Evolution,120,Economo,,
+B16,Ecology and Evolution,120,Economo,,
+B18,Methods of Mathematical Modeling I,90,Fried,2,540
+B18,Methods of Mathematical Modeling I,90,Fried,4,540
+SC,Skill Clinic,90,Gillet,1,960
+JP1,Japanese 1,60,Yamakawa,0,960
+JP1,Japanese 1,60,Yamakawa,2,960
+PD1,Professional Development 1,240,Wickens,4,780
+PD2,Professional Development 2,240,Arbuthnott,4,780
