@@ -60,7 +60,7 @@ def draw_chart(enrollment, courses, term):
 
     courses = sorted([c[0] for c in courses])
 
-    chart_path = "courses_collisions_term_{}.tex".format(term)
+    chart_path = "GlobalCharts/courses_collisions_term_{}.tex".format(term)
 
     title = "Student Overlap Chart for all Years and Terms"
 
@@ -122,6 +122,6 @@ def draw_chart(enrollment, courses, term):
 
 if __name__ == '__main__':
     all_enrollment = get_all_enrollments()
-    term_courses = get_term_courses(2019)
+    term_courses = get_term_courses(2020)
     for term, courses in enumerate(term_courses):
         draw_chart(all_enrollment, courses, term + 1)

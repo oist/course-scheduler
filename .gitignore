@@ -2,6 +2,7 @@
 input_files/*
 output_files/*
 other\ schedules/
+GlobalCharts/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
