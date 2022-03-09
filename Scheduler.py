@@ -96,3 +96,4 @@ if __name__ == '__main__':
 
     except IndexError: # No arguments
         print("Add arguments: year, term, path to schedule")
+
