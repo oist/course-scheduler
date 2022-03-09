@@ -6,7 +6,7 @@ import os
 def get_all_enrollments():
     db = pymysql.connect(host="dbc01.oist.jp",       # your host, usually localhost
                          user="gs_readonly",         # your username
-                         passwd=***REMOVED***,  # your password
+                         passwd="REMOVED",  # your password
                          db="grad_school")           # name of the database
 
     # you must create a Cursor object. It will let
@@ -34,7 +34,7 @@ def get_term_courses(year):
 
     db = pymysql.connect(host="dbc01.oist.jp",       # your host, usually localhost
                          user="gs_readonly",         # your username
-                         passwd=***REMOVED***,  # your password
+                         passwd="REMOVED",  # your password
                          db="grad_school")           # name of the database
 
     # you must create a Cursor object. It will let
