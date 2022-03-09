@@ -7,7 +7,7 @@ def get_students(input_path, year, term):
 
     db = pymysql.connect(host="dbc01.oist.jp",       # your host, usually localhost
                          user="gs_readonly",         # your username
-                         passwd=***REMOVED***,  # your password
+                         passwd="***REMOVED***",  # your password
                          db="grad_school")           # name of the database
 
     file_path = os.path.join(input_path, "{}_{}_students.csv".format(year, term))
